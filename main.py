@@ -128,7 +128,7 @@ for w1 in token_dict:
         addk_bigram_probs[w1][w2] = (count + k) / (total_count + k * V)
 
 for i in addk_bigram_probs:
-    logger.info(f"Bigram Laplace '{i}': {addk_bigram_probs[i]}")
+    logger.info(f"Bigram Addk '{i}': {addk_bigram_probs[i]}")
 
 def bigram_model(line: typing.List[str], probs: dict[str, dict[str, float]]) -> float:
     """
