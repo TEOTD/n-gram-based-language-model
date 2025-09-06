@@ -60,14 +60,14 @@ laplace_unigram_probs = {token: (unigram_freq.get(token, 0) + 1) / (word_count +
                  for token in token_dict}
 
 for i in laplace_unigram_probs:
-    logger.info(f"Unigram_Laplace '{i}': {laplace_unigram_probs[i]}")
+    logger.info(f"Unigram Laplace '{i}': {laplace_unigram_probs[i]}")
 
 k = 0.5
 addk_unigram_probs = {token: (unigram_freq.get(token, 0) + k) / (word_count + k * len(token_dict))
               for token in token_dict}
 
 for i in addk_unigram_probs:
-    logger.info(f"Unigram_Addk '{i}': {addk_unigram_probs[i]}")
+    logger.info(f"Unigram Addk '{i}': {addk_unigram_probs[i]}")
 
 def unigram_model(line: typing.List[str], probs: dict[str, float]) -> float:
     """
@@ -114,6 +114,9 @@ for w1 in token_dict:
         count = bigram_freq[w1].get(w2, 0)
         laplace_bigram_probs[w1][w2] = (count + 1) / (total_count + V)
 
+for i in laplace_bigram_probs:
+    logger.info(f"Bigram Laplace '{i}': {laplace_bigram_probs[i]}")
+
 # Add-k smoothing
 k = 0.5
 addk_bigram_probs = {}
@@ -123,6 +126,9 @@ for w1 in token_dict:
     for w2 in continuation_token_dict:
         count = bigram_freq[w1].get(w2, 0)
         addk_bigram_probs[w1][w2] = (count + k) / (total_count + k * V)
+
+for i in addk_bigram_probs:
+    logger.info(f"Bigram Laplace '{i}': {addk_bigram_probs[i]}")
 
 def bigram_model(line: typing.List[str], probs: dict[str, dict[str, float]]) -> float:
     """
