@@ -75,6 +75,7 @@ def unigram_model(line: typing.List[str], probs: dict[str, float]) -> float:
 
     Inputs:
         line: A list of tokens representing the line.
+        probs: A dictionary mapping tokens to their probabilities.
     
     Returns:
         A float representing the natural log of the probability of the line.
@@ -136,6 +137,7 @@ def bigram_model(line: typing.List[str], probs: dict[str, dict[str, float]]) -> 
 
     Input:
         line: A list of tokens representing the line.
+        probs: A dictionary mapping tokens to their probabilities.
     
     Output:
         A float representing the natural log of the probability of the line.
