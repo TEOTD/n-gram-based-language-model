@@ -148,6 +148,28 @@ def bigram_model(line: typing.List[str], probs: dict[str, dict[str, float]]) -> 
         prob += np.log(probs.get(bigram[0], {}).get(bigram[1], smoothing_value))
     return prob
 
+# Perplexity
+
+def perplexity(corpus: list[list[str]], model_fn, probs) -> float:
+    """
+    Compute perplexity for a given corpus under a language model.
+
+    Inputs:
+        corpus: List of tokenized lines (each line is a list of tokens).
+        model_fn: Function that takes (line, probs) and returns log probability.
+        probs: Probability dictionary for the model.
+
+    Returns:
+        Perplexity (float).
+    """
+    total_log_prob = 0.0
+    total_tokens = 0
+    for line in corpus:
+        total_log_prob += model_fn(line, probs)
+        total_tokens += len(line)
+    avg_log_prob = total_log_prob / total_tokens
+    return np.exp(-avg_log_prob)
+
 # Validation tests
 
 with open(val_path, "r") as f:
@@ -172,3 +194,24 @@ with open(val_path, "r") as f:
         print (f"Bigram prob: {bigram_prob}")
         print (f"Bigram Laplace prob: {laplace_bigram_prob}")
         print (f"Bigram Addk prob: {addk_bigram_prob}")
+
+    # # Compute perplexities
+    # print("\n=== Perplexities on Validation Set ===")
+    # print("Unigram:", perplexity(val_corpus, unigram_model, unigram_probs))
+    # print("Unigram Laplace:", perplexity(val_corpus, unigram_model, laplace_unigram_probs))
+    # print("Unigram Add-k:", perplexity(val_corpus, unigram_model, addk_unigram_probs))
+    # print("Bigram:", perplexity(val_corpus, bigram_model, bigram_probs))
+    # print("Bigram Laplace:", perplexity(val_corpus, bigram_model, laplace_bigram_probs))
+    # print("Bigram Add-k:", perplexity(val_corpus, bigram_model, addk_bigram_probs))
+
+    # Compute perplexities - table output
+    print("\n=== Perplexities on Validation Set ===")
+    print(f"{'Model':<20} {'Perplexity':>12}")
+    print("-" * 32)
+    print(f"{'Unigram':<20} {perplexity(val_corpus, unigram_model, unigram_probs):>12.3f}")
+    print(f"{'Unigram Laplace':<20} {perplexity(val_corpus, unigram_model, laplace_unigram_probs):>12.3f}")
+    print(f"{'Unigram Add-k':<20} {perplexity(val_corpus, unigram_model, addk_unigram_probs):>12.3f}")
+    print(f"{'Bigram':<20} {perplexity(val_corpus, bigram_model, bigram_probs):>12.3f}")
+    print(f"{'Bigram Laplace':<20} {perplexity(val_corpus, bigram_model, laplace_bigram_probs):>12.3f}")
+    print(f"{'Bigram Add-k':<20} {perplexity(val_corpus, bigram_model, addk_bigram_probs):>12.3f}")
+
