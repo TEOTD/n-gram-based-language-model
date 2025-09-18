@@ -5,8 +5,8 @@ from collections import Counter, defaultdict
 import numpy as np
 
 smoothing_value = 1e-8
-train_path = "A1_DATASET/train.txt"
-val_path = "A1_DATASET/val.txt"
+train_path = "A1_TEST/train.txt"
+val_path = "A1_TEST/val.txt"
 
 # Set logging / print options
 logging.basicConfig(level=logging.ERROR)
