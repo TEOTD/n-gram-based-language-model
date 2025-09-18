@@ -184,16 +184,31 @@ with open(val_path, "r") as f:
         bigram_prob = np.array([bigram_model(line, bigram_probs)])
         laplace_bigram_prob = np.array([bigram_model(line, laplace_bigram_probs)])
         addk_bigram_prob = np.array([bigram_model(line, addk_bigram_probs)])
+        
+        # Log Probabilities
+        # print (" ".join(line))
+        # print()
+        # print (f"Unigram prob: {unigram_prob}")
+        # print (f"Unigram Laplace prob: {laplace_unigram_prob}")
+        # print (f"Unigram Addk prob: {addk_unigram_prob}")
+        # print()
+        # print (f"Bigram prob: {bigram_prob}")
+        # print (f"Bigram Laplace prob: {laplace_bigram_prob}")
+        # print (f"Bigram Addk prob: {addk_bigram_prob}")
+        
+        # Log Probabilities - table output
+        print(" ".join(line))
+        print("\n=== Log Probabilities ===")
+        print(f"{'Model':<20} {'Log Probability':>15}")
+        print("-" * 38)
+        print(f"{'Unigram':<20} {unigram_prob[0]:>15.3f}")
+        print(f"{'Unigram Laplace':<20} {laplace_unigram_prob[0]:>15.3f}")
+        print(f"{'Unigram Add-k':<20} {addk_unigram_prob[0]:>15.3f}")
+        print(f"{'Bigram':<20} {bigram_prob[0]:>15.3f}")
+        print(f"{'Bigram Laplace':<20} {laplace_bigram_prob[0]:>15.3f}")
+        print(f"{'Bigram Add-k':<20} {addk_bigram_prob[0]:>15.3f}")
+        print()
 
-        print (" ".join(line))
-        print()
-        print (f"Unigram prob: {unigram_prob}")
-        print (f"Unigram Laplace prob: {laplace_unigram_prob}")
-        print (f"Unigram Addk prob: {addk_unigram_prob}")
-        print()
-        print (f"Bigram prob: {bigram_prob}")
-        print (f"Bigram Laplace prob: {laplace_bigram_prob}")
-        print (f"Bigram Addk prob: {addk_bigram_prob}")
 
     # # Compute perplexities
     # print("\n=== Perplexities on Validation Set ===")
