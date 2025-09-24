@@ -148,6 +148,30 @@ def bigram_model(line: typing.List[str], probs: dict[str, dict[str, float]]) -> 
         prob += np.log(probs.get(bigram[0], {}).get(bigram[1], smoothing_value))
     return prob
 
+# unknowmn token handling
+
+MIN_FREQ = 2
+raw_counts = Counter(token for line in train_corpus for token in line)
+specials = {'<start>', '<end>', '<unk>'}
+vocab = {tok for tok, c in raw_counts.items() if c >= MIN_FREQ} | specials
+
+# Replace rare tokens with <unk>
+train_corpus = [
+    [tok if tok in vocab else '<unk>' for tok in line]
+    for line in train_corpus
+]
+
+# update token_dict 
+token_dict = vocab
+
+orig_types = len(raw_counts)
+replaced_types = len([tok for tok, c in raw_counts.items() if c < MIN_FREQ and tok not in specials])
+total_tokens = sum(len(line) for line in train_corpus)
+unk_tokens = sum(1 for line in train_corpus for tok in line if tok == '<unk>')
+print(f"Vocab size after threshold={MIN_FREQ}: {len(vocab)} (original types={orig_types}, replaced types={replaced_types})")
+print(f"Total tokens in train: {total_tokens}; '<unk>' tokens: {unk_tokens} ({100*unk_tokens/total_tokens:.2f}%)")
+
+
 # Perplexity
 
 def perplexity(corpus: list[list[str]], model_fn, probs) -> float:
