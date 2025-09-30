@@ -33,12 +33,28 @@ def preprocess_line(line: str, dict: set[str] = None) -> typing.List[str]:
     return l
 
 with open(train_path, "r") as f:
-    train_corpus = list(map(preprocess_line, f.readlines()))
+    raw_train = [preprocess_line(line) for line in f]
 
-token_dict = {'<start>', '<end>', '<unk>'}
-for line in train_corpus:
-    for token in line:
-        token_dict.add(token)
+  
+# Count raw token frequencies
+raw_counts = Counter(token for line in raw_train for token in line)
+
+# Handle rare words / <unk> token
+
+MIN_FREQ = 6   # Choose threshold           
+specials = {'<start>', '<end>', '<unk>'}
+
+# Build vocabulary (keep <unk> explicitly)
+vocab = {tok for tok, c in raw_counts.items() if c >= MIN_FREQ} | specials
+
+orig_types = len(raw_counts)
+replaced_types = len([tok for tok, c in raw_counts.items() if c < MIN_FREQ and tok not in specials])
+print(f"Vocab size after threshold={MIN_FREQ}: {len(vocab)} (original types={orig_types}, replaced types={replaced_types})")
+
+# Replace rare tokens with <unk>
+train_corpus = [[tok if tok in vocab else '<unk>' for tok in line] for line in raw_train]
+
+token_dict = set(vocab)
 
 # Unigram model
 
