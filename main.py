@@ -189,6 +189,7 @@ with open(val_path, "r") as f:
     val_corpus = []
     for line in f.readlines():
         val_corpus.append(preprocess_line(line, token_dict))
+        
     for line in val_corpus:
         unigram_prob = np.array([unigram_model(line, unigram_probs)])
         laplace_unigram_prob = np.array([unigram_model(line, laplace_unigram_probs)])
@@ -210,6 +211,17 @@ with open(val_path, "r") as f:
         print(f"{'Bigram Laplace':<20} {laplace_bigram_prob[0]:>15.3f}")
         print(f"{'Bigram Add-k':<20} {addk_bigram_prob[0]:>15.3f}")
         print()
+
+    # Compute perplexities - table output
+    print("\n=== Perplexities on Training Set ===")
+    print(f"{'Model':<20} {'Perplexity':>12}")
+    print("-" * 32)
+    print(f"{'Unigram':<20} {perplexity(train_corpus, unigram_model, unigram_probs):>12.3f}")
+    print(f"{'Unigram Laplace':<20} {perplexity(train_corpus, unigram_model, laplace_unigram_probs):>12.3f}")
+    print(f"{'Unigram Add-k':<20} {perplexity(train_corpus, unigram_model, addk_unigram_probs):>12.3f}")
+    print(f"{'Bigram':<20} {perplexity(train_corpus, bigram_model, bigram_probs):>12.3f}")
+    print(f"{'Bigram Laplace':<20} {perplexity(train_corpus, bigram_model, laplace_bigram_probs):>12.3f}")
+    print(f"{'Bigram Add-k':<20} {perplexity(train_corpus, bigram_model, addk_bigram_probs):>12.3f}")
 
     # Compute perplexities - table output
     print("\n=== Perplexities on Validation Set ===")
