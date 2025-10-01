@@ -40,7 +40,6 @@ with open(train_path, "r") as f:
 raw_counts = Counter(token for line in raw_train for token in line)
 
 # Handle rare words / <unk> token
-
 MIN_FREQ = 6   # Choose threshold           
 specials = {'<start>', '<end>', '<unk>'}
 
@@ -57,7 +56,6 @@ train_corpus = [[tok if tok in vocab else '<unk>' for tok in line] for line in r
 token_dict = set(vocab)
 
 # Unigram model
-
 word_count = sum(len(line) for line in train_corpus)
 
 unigram_freq = Counter()
@@ -72,12 +70,14 @@ freqs = list(unigram_probs.values())
 for i in unigram_probs:
     logger.info(f"Unigram '{i}': {unigram_probs[i]}")
 
+# Laplace smoothing
 laplace_unigram_probs = {token: (unigram_freq.get(token, 0) + 1) / (word_count + len(token_dict))
                  for token in token_dict}
 
 for i in laplace_unigram_probs:
     logger.info(f"Unigram Laplace '{i}': {laplace_unigram_probs[i]}")
 
+# Add-k smoothing
 k = 0.5
 addk_unigram_probs = {token: (unigram_freq.get(token, 0) + k) / (word_count + k * len(token_dict))
               for token in token_dict}
@@ -102,7 +102,6 @@ def unigram_model(line: typing.List[str], probs: dict[str, float]) -> float:
     return prob
 
 # Bigram model
-
 bigram_freq = defaultdict(Counter)
 for line in train_corpus:
     for i in range(len(line)-1):
@@ -165,7 +164,6 @@ def bigram_model(line: typing.List[str], probs: dict[str, dict[str, float]]) -> 
     return prob
 
 # Perplexity
-
 def perplexity(corpus: list[list[str]], model_fn, probs) -> float:
     """
     Compute perplexity for a given corpus under a language model.
@@ -187,7 +185,6 @@ def perplexity(corpus: list[list[str]], model_fn, probs) -> float:
     return np.exp(-avg_log_prob)
 
 # Validation tests
-
 with open(val_path, "r") as f:
     val_corpus = []
     for line in f.readlines():
@@ -201,17 +198,6 @@ with open(val_path, "r") as f:
         laplace_bigram_prob = np.array([bigram_model(line, laplace_bigram_probs)])
         addk_bigram_prob = np.array([bigram_model(line, addk_bigram_probs)])
         
-        # Log Probabilities
-        # print (" ".join(line))
-        # print()
-        # print (f"Unigram prob: {unigram_prob}")
-        # print (f"Unigram Laplace prob: {laplace_unigram_prob}")
-        # print (f"Unigram Addk prob: {addk_unigram_prob}")
-        # print()
-        # print (f"Bigram prob: {bigram_prob}")
-        # print (f"Bigram Laplace prob: {laplace_bigram_prob}")
-        # print (f"Bigram Addk prob: {addk_bigram_prob}")
-        
         # Log Probabilities - table output
         print(" ".join(line))
         print("\n=== Log Probabilities ===")
@@ -224,16 +210,6 @@ with open(val_path, "r") as f:
         print(f"{'Bigram Laplace':<20} {laplace_bigram_prob[0]:>15.3f}")
         print(f"{'Bigram Add-k':<20} {addk_bigram_prob[0]:>15.3f}")
         print()
-
-
-    # # Compute perplexities
-    # print("\n=== Perplexities on Validation Set ===")
-    # print("Unigram:", perplexity(val_corpus, unigram_model, unigram_probs))
-    # print("Unigram Laplace:", perplexity(val_corpus, unigram_model, laplace_unigram_probs))
-    # print("Unigram Add-k:", perplexity(val_corpus, unigram_model, addk_unigram_probs))
-    # print("Bigram:", perplexity(val_corpus, bigram_model, bigram_probs))
-    # print("Bigram Laplace:", perplexity(val_corpus, bigram_model, laplace_bigram_probs))
-    # print("Bigram Add-k:", perplexity(val_corpus, bigram_model, addk_bigram_probs))
 
     # Compute perplexities - table output
     print("\n=== Perplexities on Validation Set ===")
